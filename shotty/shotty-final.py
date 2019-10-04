@@ -105,15 +105,9 @@ def list_instances(project):
 @instances.command('start')
 @click.option('--project', default=None,
    help="Only instances for project (tag Project:<name>)")
-@click.option('--force', 'force', default=False, is_flag=True,
-    help='Forces command to be executed without Project set')
-
-def start_instances(project, force):
+def start_instances(project):
     "Start EC2 instances"
     instances = filter_instances(project)
-
-    if not project and not force:
-        raise Exception('You need to specify a --project name or --force option')
 
     for i in instances:
         print('Starting {0}...'.format(i.id))
@@ -124,63 +118,29 @@ def start_instances(project, force):
 
     return
 
-@instances.command('reboot')
-@click.option('--project', default=None,
-   help="Only instances for project (tag Project:<name>)")
-@click.option('--force', 'force', default=False, is_flag=True,
-    help='Forces command to be executed without Project set')
-
-def reboot_instances(project, force):
-    "Stop EC2 instances"
-    instances = filter_instances(project)
-
-    if not project and not force:
-        raise Exception('You need to specify a --project name or --force option')
-
-    for i in instances:
-        print('Rebooting {0}...'.format(i.id))
-        try:
-            i.reboot()
-        except botocore.exceptions.ClientError as e:
-            print('Could not reboot {0} '.format(i.id) + str(e))
-
-    return
-
 
 @instances.command('stop')
 @click.option('--project', default=None,
    help="Only instances for project (tag Project:<name>)")
-@click.option('--force', 'force', default=False, is_flag=True,
-    help='Forces command to be executed without Project set')
-
-def stop_instances(project, force):
+def stop_instances(project):
     "Stop EC2 instances"
     instances = filter_instances(project)
 
-    if not project and not force:
-        raise Exception('You need to specify a --project name or --force option')
-
     for i in instances:
         print('Stopping {0}...'.format(i.id))
-        try:
-            i.stop()
-        except botocore.exceptions.ClientError as e:
-            print('Could not stop {0} '.format(i.id) + str(e))
+    try:
+        i.stop()
+    except botocore.exceptions.ClientError as e:
+        print('Could not stop {0} '.format(i.id) + str(e))
 
     return
 
 @instances.command('snapshot', help='Create snapshots of all volumes')
 @click.option('--project', default=None,
    help="Only instances for project (tag Project:<name>)")
-@click.option('--force', 'force', default=False, is_flag=True,
-    help='Forces command to be executed without Project set')
-
-def create_snapshots(project, force):
+def create_snapshots(project):
     'Create snapshots for EC2 instances'
     instances = filter_instances(project)
-
-    if not project and not force:
-        raise Exception('You need to specify a --project name or --force option')
 
     for i in instances:
         print('Stopping {0}'.format(i.id))
